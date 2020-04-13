@@ -40,7 +40,9 @@ public class FileCountBehavior extends AbstractBehavior<ICommand> {
                 })
                 .onMessage(EOFMessage.class, eofMessage -> {
                     System.out.println("Total word Count " + totalCount);
-                    return Behaviors.stopped();
+                    // perform graceful stop, executing cleanup before final system termination
+                    // behavior executing cleanup is passed as a parameter to Actor.stopped
+                    return Behaviors.stopped(() -> System.out.println("Parent Cleanup!"));
                 })
                 .onMessage(StartCommand.class, startCommand -> {
 
