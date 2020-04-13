@@ -2,6 +2,7 @@ package com.test.akka;
 
 
 import akka.actor.typed.Behavior;
+import akka.actor.typed.PostStop;
 import akka.actor.typed.javadsl.AbstractBehavior;
 import akka.actor.typed.javadsl.ActorContext;
 import akka.actor.typed.javadsl.Behaviors;
@@ -25,7 +26,11 @@ public class WordCountBehavior extends AbstractBehavior<ICommand> {
                 .onMessage(WordCountCommand.class, wordCountCommand -> {
                     int count = wordCountCommand.getLine().split(" ").length;
                     wordCountCommand.getSender().tell(new WordCountResponse(count));
-                    return this;
+                    return Behaviors.same();
+                })
+                .onSignal(PostStop.class,signal->{
+                    System.err.println(getContext().getSelf().path()+" is closing down ..");
+                    return Behaviors.same();
                 }).build();
     }
 }

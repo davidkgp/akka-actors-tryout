@@ -36,11 +36,11 @@ public class FileCountBehavior extends AbstractBehavior<ICommand> {
         return newReceiveBuilder()
                 .onMessage(WordCountResponse.class, wordCountResponse -> {
                     totalCount = totalCount+wordCountResponse.getCount();
-                    return this;
+                    return Behaviors.same();
                 })
                 .onMessage(EOFMessage.class, eofMessage -> {
                     System.out.println("Total word Count " + totalCount);
-                    return this;
+                    return Behaviors.stopped();
                 })
                 .onMessage(StartCommand.class, startCommand -> {
 
@@ -58,7 +58,7 @@ public class FileCountBehavior extends AbstractBehavior<ICommand> {
                     }
                     getContext().getSelf().tell(new EOFMessage());
 
-                    return this;
+                    return Behaviors.same();
                 }).build();
     }
 
