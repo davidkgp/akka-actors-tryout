@@ -24,8 +24,13 @@ public class WordCountBehavior extends AbstractBehavior<ICommand> {
     public Receive<ICommand> createReceive() {
         return newReceiveBuilder()
                 .onMessage(WordCountCommand.class, wordCountCommand -> {
-                    int count = wordCountCommand.getLine().split(" ").length;
-                    wordCountCommand.getSender().tell(new WordCountResponse(count));
+                    if(wordCountCommand.getLine()!=null && wordCountCommand.getLine().trim().length()>0){
+                        int count = wordCountCommand.getLine().split(" ").length;
+                        wordCountCommand.getSender().tell(new WordCountResponse(count));
+                    }else{
+                        wordCountCommand.getSender().tell(new WordCountResponse(0));
+                    }
+
                     return Behaviors.same();
                 })
                 .onSignal(PostStop.class,signal->{
