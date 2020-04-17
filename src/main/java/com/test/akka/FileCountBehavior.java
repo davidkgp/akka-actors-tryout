@@ -34,6 +34,8 @@ public class FileCountBehavior extends AbstractBehavior<ICommand> {
 
     private Set<ActorRef<ICommand>> spawnedActors = Collections.emptySet();
 
+    private ActorRef<Integer> initiator;
+
 
     @Override
     public Receive<ICommand> createReceive() {
@@ -45,6 +47,8 @@ public class FileCountBehavior extends AbstractBehavior<ICommand> {
     }
 
     private Behavior<ICommand> handleStartCommand(StartCommand startCommand) {
+
+        initiator = startCommand.getInitiator();
 
         List<String> listOfString = readAllLines(startCommand.getFileToBeCounted());
         for (int i = 0; i < listOfString.size(); i++) {
@@ -76,7 +80,7 @@ public class FileCountBehavior extends AbstractBehavior<ICommand> {
 
     private Behavior<ICommand> handleEOF(EOFMessage eofMessage) {
         if (spawnedActors.isEmpty()) {
-            System.out.println("Total word Count " + totalCount);
+            initiator.tell(totalCount);
             // perform graceful stop, executing cleanup before final system termination
             // behavior executing cleanup is passed as a parameter to Actor.stopped
             return Behaviors.stopped(() -> System.out.println("Parent Cleanup!"));
