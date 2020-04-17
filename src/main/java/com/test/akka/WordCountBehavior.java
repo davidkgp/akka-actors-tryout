@@ -26,15 +26,15 @@ public class WordCountBehavior extends AbstractBehavior<ICommand> {
                 .onMessage(WordCountCommand.class, wordCountCommand -> {
                     if(wordCountCommand.getLine()!=null && wordCountCommand.getLine().trim().length()>0){
                         int count = wordCountCommand.getLine().split(" ").length;
-                        wordCountCommand.getSender().tell(new WordCountResponse(count));
+                        wordCountCommand.getSender().tell(new WordCountResponse(count,getContext().getSelf()));
                     }else{
-                        wordCountCommand.getSender().tell(new WordCountResponse(0));
+                        wordCountCommand.getSender().tell(new WordCountResponse(0,getContext().getSelf()));
                     }
 
                     return Behaviors.same();
                 })
                 .onSignal(PostStop.class,signal->{
-                    System.err.println(getContext().getSelf().path()+" is closing down ..");
+                    //System.err.println(getContext().getSelf().path()+" is closing down ..");
                     return Behaviors.same();
                 }).build();
     }
